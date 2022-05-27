@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,9 +21,9 @@ namespace OpenGL
             InitializeComponent();
         }
 
-        int RayTracingProgramID;
-        int RayTracingVertexShader;
-        int RayTracingFragmentShader;
+        int BasicProgramID;
+        int FormVertexShader;
+        int InitFragmentShader;
 
         void loadShader(List<String> filenames, ShaderType type, int program, out int address)
         {
@@ -43,17 +43,17 @@ namespace OpenGL
 
         private bool InitShaders()
         {
-            RayTracingProgramID = GL.CreateProgram();
+            BasicProgramID = GL.CreateProgram();
             List<String> vertexShaderText = new List<string>();
             vertexShaderText.Add("..\\..\\Shaders\\raytracing.vert");
             List<String> fragmentShaderText = new List<string>();
             fragmentShaderText.Add("..\\..\\Shaders\\raytracing.frag");
 
-            loadShader(vertexShaderText, ShaderType.VertexShader, RayTracingProgramID, out RayTracingVertexShader);
-            loadShader(fragmentShaderText, ShaderType.FragmentShader, RayTracingProgramID, out RayTracingFragmentShader);
+            loadShader(vertexShaderText, ShaderType.VertexShader, BasicProgramID, out FormVertexShader);
+            loadShader(fragmentShaderText, ShaderType.FragmentShader, BasicProgramID, out InitFragmentShader);
 
-            GL.LinkProgram(RayTracingProgramID);
-            Console.WriteLine(GL.GetProgramInfoLog(RayTracingProgramID));
+            GL.LinkProgram(BasicProgramID);
+            Console.WriteLine(GL.GetProgramInfoLog(BasicProgramID));
             GL.Enable(EnableCap.Texture2D);
             return true;
         }
@@ -173,15 +173,15 @@ namespace OpenGL
             int location;
             for (int i = 0; i < materials.Length; i++)
             {
-                location = GL.GetUniformLocation(RayTracingProgramID, "uMaterials[" + i + "].Color");
+                location = GL.GetUniformLocation(BasicProgramID, "uMaterials[" + i + "].Color");
                 GL.Uniform3(location, materials[i].Color);
-                location = GL.GetUniformLocation(RayTracingProgramID, "uMaterials[" + i + "].LightCoeffs");
+                location = GL.GetUniformLocation(BasicProgramID, "uMaterials[" + i + "].LightCoeffs");
                 GL.Uniform4(location, materials[i].LightCoeffs);
-                location = GL.GetUniformLocation(RayTracingProgramID, "uMaterials[" + i + "].ReflectionCoef");
+                location = GL.GetUniformLocation(BasicProgramID, "uMaterials[" + i + "].ReflectionCoef");
                 GL.Uniform1(location, materials[i].ReflectionCoef);
-                location = GL.GetUniformLocation(RayTracingProgramID, "uMaterials[" + i + "].RefractionCoef");
+                location = GL.GetUniformLocation(BasicProgramID, "uMaterials[" + i + "].RefractionCoef");
                 GL.Uniform1(location, materials[i].RefractionCoef);
-                location = GL.GetUniformLocation(RayTracingProgramID, "uMaterials[" + i + "].MaterialType");
+                location = GL.GetUniformLocation(BasicProgramID, "uMaterials[" + i + "].MaterialType");
                 GL.Uniform1(location, materials[i].MaterialType);
             }
 
@@ -191,21 +191,21 @@ namespace OpenGL
             GL.ClearColor(Color.AliceBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             ;
-            GL.UseProgram(RayTracingProgramID);
+            GL.UseProgram(BasicProgramID);
             initMaterials();
             initSceneBuffers();
-            int location = GL.GetUniformLocation(RayTracingProgramID, "uCamera.Position");
+            int location = GL.GetUniformLocation(BasicProgramID, "uCamera.Position");
             GL.Uniform3(location, new Vector3(0, 0, -7.5f));
-            location = GL.GetUniformLocation(RayTracingProgramID, "uCamera.Up");
+            location = GL.GetUniformLocation(BasicProgramID, "uCamera.Up");
             GL.Uniform3(location, Vector3.UnitY);
-            location = GL.GetUniformLocation(RayTracingProgramID, "uCamera.Side");
+            location = GL.GetUniformLocation(BasicProgramID, "uCamera.Side");
             GL.Uniform3(location, Vector3.UnitX);
-            location = GL.GetUniformLocation(RayTracingProgramID, "uCamera.View");
+            location = GL.GetUniformLocation(BasicProgramID, "uCamera.View");
             GL.Uniform3(location, Vector3.UnitZ);
-            location = GL.GetUniformLocation(RayTracingProgramID, "uCamera.Scale");
+            location = GL.GetUniformLocation(BasicProgramID, "uCamera.Scale");
             GL.Uniform2(location, new Vector2(1, (float)openGlControl.Height / openGlControl.Width));
 
-            location = GL.GetUniformLocation(RayTracingProgramID, "uLight.Position");
+            location = GL.GetUniformLocation(BasicProgramID, "uLight.Position");
             GL.Uniform3(location, new Vector3(2.0f, 0.0f, -4.0f));
 
             GL.Color3(Color.White);
